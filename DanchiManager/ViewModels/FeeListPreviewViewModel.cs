@@ -21,17 +21,19 @@ public partial class FeeListPreviewViewModel : ObservableObject
     readonly DatabaseService _db;
     readonly PrintService _print;
     readonly IDialogService _dialogs;
+    readonly string? _currentBuilding;
 
     public ObservableCollection<FeeListRow> Rows { get; } = [];
     [ObservableProperty] private int _year;
     [ObservableProperty] private int _sum;
     public string Title => $"令和{Year}年度 会費確認";
 
-    public FeeListPreviewViewModel(DatabaseService db, PrintService print, IDialogService dialogs)
+    public FeeListPreviewViewModel(DatabaseService db, PrintService print, IDialogService dialogs, string? currentBuilding)
     {
         _db = db;
         _print = print;
         _dialogs = dialogs;
+        _currentBuilding = currentBuilding;
         Year = AppConstants.FiscalWarekiYear();
     }
 
@@ -70,7 +72,7 @@ public partial class FeeListPreviewViewModel : ObservableObject
     [RelayCommand]
     private void PrintEnvelopes()
     {
-        var vm = new EnvelopePreviewViewModel(_db, _print, null);
+        var vm = new EnvelopePreviewViewModel(_db, _print, _currentBuilding, Year);
         _dialogs.ShowEnvelopes(vm);
     }
 

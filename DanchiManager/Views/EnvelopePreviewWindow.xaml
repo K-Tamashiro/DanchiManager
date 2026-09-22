@@ -11,7 +11,7 @@
       <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
     </StackPanel>
     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
-      <TextBlock Text="{Binding Title}" FontWeight="Bold" Margin="0,0,0,6"/>
+      <TextBlock Text="{Binding Title}" Style="{StaticResource DialogHeading}" Margin="0,0,0,6"/>
       <CheckBox Content="全棟を対象にする（外すと現在の棟のみ）" IsChecked="{Binding AllBuildings}"/>
     </StackPanel>
     <ListView ItemsSource="{Binding Recipients}">

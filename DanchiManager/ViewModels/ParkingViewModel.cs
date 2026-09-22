@@ -10,16 +10,18 @@ public partial class ParkingViewModel : ObservableObject
 {
     readonly DatabaseService _db;
     readonly IDialogService _dialogs;
+    readonly PrintService _print;
 
     public ObservableCollection<ParkingLot> Lots { get; } = [];
 
     [ObservableProperty] private ParkingLot? _selectedLot;
     [ObservableProperty] private ParkingSlot? _selectedSlot;
 
-    public ParkingViewModel(DatabaseService db, IDialogService dialogs)
+    public ParkingViewModel(DatabaseService db, IDialogService dialogs, PrintService print)
     {
         _db = db;
         _dialogs = dialogs;
+        _print = print;
         foreach (var lot in db.LoadLots()) Lots.Add(lot);
         SelectedLot = Lots.FirstOrDefault();
     }
@@ -102,6 +104,13 @@ public partial class ParkingViewModel : ObservableObject
         foreach (var lot in Lots) _db.SaveLot(lot);
         OnPropertyChanged(nameof(OccupiedTotal));
         RequestClose?.Invoke(this, true);
+    }
+
+    [RelayCommand]
+    private void Print()
+    {
+        if (Lots.Count == 0) return;
+        _print.PrintParking(Lots);
     }
 
     [RelayCommand] private void Close() => RequestClose?.Invoke(this, true);

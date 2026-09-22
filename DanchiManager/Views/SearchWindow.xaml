@@ -4,6 +4,7 @@
         xmlns:vm="clr-namespace:DanchiManager.ViewModels"
         Title="検索" Width="720" Height="900" MinHeight="480" MaxHeight="900">
   <DockPanel Margin="12">
+    <TextBlock DockPanel.Dock="Top" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource DialogHeading}" Margin="0,0,0,8"/>
     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
       <Button Style="{StaticResource WinButton}" Content="この部屋を開く" Command="{Binding ChooseCommand}" Width="120"/>
       <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CancelCommand}" Width="80" IsCancel="True"/>

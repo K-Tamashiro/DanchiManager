@@ -12,6 +12,9 @@ public static class AppConstants
 {
     public const string UnlockPassword = "1502";
     public const int DefaultFee = 100;
+    public const string AssociationTitle = "高岸町自治会会費";
+    public const int GridCols = 7;
+    public const int GridRows = 4;
 
     public static int FiscalWarekiYear(DateTime? now = null)
     {

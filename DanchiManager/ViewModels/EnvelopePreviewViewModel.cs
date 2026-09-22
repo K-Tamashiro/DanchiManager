@@ -20,13 +20,13 @@ public partial class EnvelopePreviewViewModel : ObservableObject
     [ObservableProperty] private bool _allBuildings;
     [ObservableProperty] private int _count;
 
-    public EnvelopePreviewViewModel(DatabaseService db, PrintService print, string? currentBuilding)
+    public EnvelopePreviewViewModel(DatabaseService db, PrintService print, string? currentBuilding, int year)
     {
         _db = db;
         _print = print;
         _currentBuilding = currentBuilding;
-        Year = AppConstants.FiscalWarekiYear();
-        AllBuildings = string.IsNullOrEmpty(currentBuilding);
+        Year = year;
+        _allBuildings = string.IsNullOrEmpty(currentBuilding);
         Rebuild();
     }
 
@@ -35,9 +35,9 @@ public partial class EnvelopePreviewViewModel : ObservableObject
     void Rebuild()
     {
         Recipients.Clear();
-        var source = AllBuildings || string.IsNullOrEmpty(_currentBuilding)
+        IReadOnlyList<RoomRecord> source = AllBuildings
             ? _db.LoadRooms()
-            : _db.LoadRooms(_currentBuilding);
+            : string.IsNullOrEmpty(_currentBuilding) ? [] : _db.LoadRooms(_currentBuilding);
         foreach (var r in source
                      .Where(x => x.Vacancy == VacancyFlag.Occupied && x.Member)
                      .OrderBy(x => x.SortOrder)

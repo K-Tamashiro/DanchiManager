@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="棟編集" Height="560" Width="580" ResizeMode="NoResize">
   <DockPanel Margin="12">
+    <TextBlock DockPanel.Dock="Top" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource DialogHeading}" Margin="0,0,0,8"/>
     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
       <Button Style="{StaticResource WinButton}" Content="登録" Command="{Binding SaveCommand}" Width="90"/>
       <Button Style="{StaticResource OrangeButton}" Content="この棟を削除" Command="{Binding DeleteCommand}" Width="120"/>

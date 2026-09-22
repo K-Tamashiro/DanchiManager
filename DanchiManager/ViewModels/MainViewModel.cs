@@ -188,7 +188,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void OpenParking()
     {
-        var vm = new ParkingViewModel(_db, _dialogs);
+        var vm = new ParkingViewModel(_db, _dialogs, _print);
         _dialogs.ShowParking(vm);
         RefreshStats();
     }
@@ -211,7 +211,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void PrintFeeList()
     {
-        var vm = new FeeListPreviewViewModel(_db, _print, _dialogs);
+        var vm = new FeeListPreviewViewModel(_db, _print, _dialogs, SelectedBuilding?.Name);
         _dialogs.ShowFeeList(vm);
     }
 

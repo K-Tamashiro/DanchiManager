@@ -5,7 +5,8 @@
         Title="{Binding Title}" Width="980" Height="900" MinHeight="480" MaxHeight="900">
   <DockPanel Margin="12">
     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
-      <Button Style="{StaticResource OrangeButton}" Content="印刷" Command="{Binding PrintCommand}" Width="90"/>
+      <Button Style="{StaticResource OrangeButton}" Content="１棟印刷" Command="{Binding PrintBuildingCommand}" Width="110"/>
+      <Button Style="{StaticResource OrangeButton}" Content="全棟印刷" Command="{Binding PrintAllBuildingsCommand}" Width="110"/>
       <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
     </StackPanel>
     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
@@ -13,7 +14,7 @@
               Command="{Binding PrevBuildingCommand}" Padding="12,4"/>
       <Button DockPanel.Dock="Right" Style="{StaticResource GoldButton}" Content="次の棟 ＞"
               Command="{Binding NextBuildingCommand}" Padding="12,4"/>
-      <TextBlock Text="{Binding Title}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding Title}" Style="{StaticResource DialogHeading}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </DockPanel>
     <ListView ItemsSource="{Binding Rooms}">
       <ListView.View>

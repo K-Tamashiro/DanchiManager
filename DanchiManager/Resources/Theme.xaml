@@ -56,6 +56,12 @@
     <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
   </Style>
 
+  <Style x:Key="DialogHeading" TargetType="TextBlock">
+    <Setter Property="FontSize" Value="{Binding FontSize, Source={x:Static vm:UiSettings.Current}, Converter={StaticResource Scale}, ConverterParameter=1.5}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="TextWrapping" Value="Wrap"/>
+  </Style>
+
   <Style x:Key="BevelBorder" TargetType="Border">
     <Setter Property="BorderThickness" Value="2"/>
     <Setter Property="BorderBrush">

@@ -61,10 +61,21 @@ public partial class BuildingSheetViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Print()
+    private void PrintBuilding()
     {
         if (SelectedBuilding is null) return;
         _print.PrintBuilding($"{SelectedBuilding.Name}  (全 {Rooms.Count} 戸)", Rooms, Stats, includePhone: true);
+    }
+
+    [RelayCommand]
+    private void PrintAllBuildings()
+    {
+        var reports = _buildings.Select(building =>
+        {
+            var rooms = _db.LoadRooms(building.Name);
+            return ($"{building.Name}  (全 {rooms.Count} 戸)", rooms, _db.Stats(building.Name));
+        });
+        _print.PrintBuildings(reports);
     }
 
     [RelayCommand] private void Close() => RequestClose?.Invoke(this, true);

@@ -20,9 +20,12 @@
       </Grid.ColumnDefinitions>
       <Border Style="{StaticResource BevelBorder}" Margin="0,0,12,12" Background="#F7F4E8" Padding="10">
         <StackPanel>
-          <TextBlock Text="{Binding Draft.RoomNo, StringFormat={}{0} 号室}" FontWeight="Bold"
-                     FontSize="{Binding FontSize, Source={x:Static vm:UiSettings.Current}, Converter={StaticResource Scale}, ConverterParameter=1.4}"/>
-          <TextBlock Text="{Binding BuildingTitle}" TextWrapping="Wrap" Margin="0,4,0,12"/>
+          <Border Background="#DCEBFA" BorderBrush="#7A9CBD" BorderThickness="1"
+                  CornerRadius="4" Padding="10,8" Margin="0,0,0,12">
+            <TextBlock Text="{Binding Draft.RoomNo, StringFormat={}{0} 号室}" FontWeight="Bold"
+                       Foreground="#17365D"
+                       FontSize="{Binding FontSize, Source={x:Static vm:UiSettings.Current}, Converter={StaticResource Scale}, ConverterParameter=1.4}"/>
+          </Border>
           <TextBlock Text="状態" FontWeight="Bold"/>
           <RadioButton Content="空室" GroupName="Vac"
                        IsChecked="{Binding Draft.Vacancy, Converter={StaticResource EnumEq}, ConverterParameter=Vacant}"/>

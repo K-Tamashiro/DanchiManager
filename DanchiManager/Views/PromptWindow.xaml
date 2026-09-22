@@ -4,6 +4,7 @@
         Title="入力" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" MinWidth="360">
   <StackPanel Margin="16">
+    <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource DialogHeading}" Margin="0,0,0,8"/>
     <TextBlock x:Name="MessageText" TextWrapping="Wrap" Margin="0,0,0,8"/>
     <TextBox x:Name="InputBox" MinWidth="280"/>
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">

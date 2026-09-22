@@ -4,6 +4,7 @@
         xmlns:vm="clr-namespace:DanchiManager.ViewModels"
         Title="{Binding Title}" Width="840" Height="900" MinHeight="480" MaxHeight="900">
   <DockPanel Margin="12">
+    <TextBlock DockPanel.Dock="Top" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource DialogHeading}" Margin="0,0,0,8"/>
     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
       <Button Style="{StaticResource OrangeButton}" Content="印刷" Command="{Binding PrintCommand}" Width="90"/>
       <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
