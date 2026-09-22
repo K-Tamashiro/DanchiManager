@@ -1,0 +1,240 @@
+<Window x:Class="DanchiManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DanchiManager.ViewModels"
+        Title="{Binding Title}"
+        Height="820" Width="1280"
+        MinHeight="640" MinWidth="1024"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        FontSize="{Binding UiFontSize}"
+        Background="#6A7A8A">
+  <Window.Resources>
+    <DataTemplate x:Key="RoomCardTemplate" DataType="{x:Type vm:RoomCardViewModel}">
+      <Button Command="{Binding DataContext.OpenRoomCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+              CommandParameter="{Binding}"
+              Margin="2" Padding="0" BorderThickness="0"
+              IsEnabled="{Binding HasRoom}">
+        <Button.Template>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="card" CornerRadius="4" BorderThickness="2" BorderBrush="#9A9A9A" Background="#F4F4F4">
+              <Border.Effect>
+                <DropShadowEffect BlurRadius="3" ShadowDepth="1" Opacity="0.3"/>
+              </Border.Effect>
+              <Grid>
+                <Border Background="#C8C8C8" Visibility="{Binding IsPlaceholder, Converter={StaticResource BoolVis}}"/>
+                <DockPanel Visibility="{Binding HasRoom, Converter={StaticResource BoolVis}}">
+                  <Border DockPanel.Dock="Top" Padding="4,2">
+                    <Border.Background>
+                      <MultiBinding Converter="{StaticResource FloorHeader}">
+                        <Binding Path="Room.Vacancy"/>
+                        <Binding Path="Room.Gender"/>
+                        <Binding Path="Room.RoomNo"/>
+                      </MultiBinding>
+                    </Border.Background>
+                    <DockPanel>
+                      <Border Background="#1A8898" CornerRadius="2" Padding="6,1" Margin="0,0,6,0">
+                        <TextBlock Text="{Binding Room.RoomNo}" Foreground="White" FontWeight="Bold"/>
+                      </Border>
+                      <TextBlock Text="入院" DockPanel.Dock="Right" FontWeight="Bold"
+                                 Foreground="#7A1028" VerticalAlignment="Center"
+                                 Visibility="{Binding IsHospital, Converter={StaticResource BoolVis}}"/>
+                      <TextBlock Text="号室" VerticalAlignment="Center"/>
+                    </DockPanel>
+                  </Border>
+                  <Grid>
+                    <TextBlock Text="空" FontWeight="Black" Foreground="{StaticResource VacantBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="{Binding DataContext.UiFontSize, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Scale}, ConverterParameter=2.8}"
+                               Visibility="{Binding IsVacant, Converter={StaticResource BoolVis}}"/>
+                    <DockPanel Margin="3,2" Visibility="{Binding ShowDetails, Converter={StaticResource BoolVis}}">
+                      <UniformGrid DockPanel.Dock="Bottom" Columns="3" Margin="0,3,0,1">
+                        <Border Background="#FFFFC0" BorderBrush="#C0B880" BorderThickness="1" Margin="1" Padding="1">
+                          <StackPanel>
+                            <TextBlock Text="人数" HorizontalAlignment="Center" Foreground="#444"/>
+                            <TextBlock Text="{Binding Room.People}" FontWeight="Bold" HorizontalAlignment="Center"
+                                       FontSize="{Binding DataContext.UiFontSize, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Scale}, ConverterParameter=1.2}"/>
+                          </StackPanel>
+                        </Border>
+                        <Border Background="#FFFFC0" BorderBrush="#C0B880" BorderThickness="1" Margin="1" Padding="1">
+                          <StackPanel>
+                            <TextBlock Text="バイク" HorizontalAlignment="Center" Foreground="#444"/>
+                            <TextBlock Text="{Binding Room.Bikes}" FontWeight="Bold" HorizontalAlignment="Center"
+                                       FontSize="{Binding DataContext.UiFontSize, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Scale}, ConverterParameter=1.2}"/>
+                          </StackPanel>
+                        </Border>
+                        <Border Background="#FFFFC0" BorderBrush="#C0B880" BorderThickness="1" Margin="1" Padding="1">
+                          <StackPanel>
+                            <TextBlock Text="自転車" HorizontalAlignment="Center" Foreground="#444"/>
+                            <TextBlock Text="{Binding Room.Bicycles}" FontWeight="Bold" HorizontalAlignment="Center"
+                                       FontSize="{Binding DataContext.UiFontSize, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Scale}, ConverterParameter=1.2}"/>
+                          </StackPanel>
+                        </Border>
+                      </UniformGrid>
+                      <Border DockPanel.Dock="Bottom" Background="#FFF4A8" Margin="1,1,1,2" Padding="3,1" MinHeight="18"
+                              Visibility="{Binding Room.Note, Converter={StaticResource NonEmptyVis}}">
+                        <TextBlock Text="{Binding Room.Note}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="40"/>
+                      </Border>
+                      <TextBlock DockPanel.Dock="Bottom" Margin="2,1" TextTrimming="CharacterEllipsis"
+                                 Visibility="{Binding Room.Phone, Converter={StaticResource NonEmptyVis}}">
+                        <Run Text="電話 " Foreground="#555"/>
+                        <Run Text="{Binding Room.Phone}" FontWeight="Bold"/>
+                      </TextBlock>
+                      <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Room.Name}" FontWeight="Bold" TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                   FontSize="{Binding DataContext.UiFontSize, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Scale}, ConverterParameter=1.15}"/>
+                        <TextBlock Text="{Binding Room.Furigana}" Opacity="0.7" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                      </StackPanel>
+                    </DockPanel>
+                  </Grid>
+                </DockPanel>
+              </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+              <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                <Setter TargetName="card" Property="BorderBrush" Value="#E02020"/>
+                <Setter TargetName="card" Property="BorderThickness" Value="3"/>
+              </DataTrigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Button.Template>
+      </Button>
+    </DataTemplate>
+  </Window.Resources>
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Height="28" Background="{StaticResource TitleBarBrush}">
+      <DockPanel Margin="8,0">
+        <TextBlock Text="団地管理" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding DbPathDisplay}" Foreground="#E0EEFF"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
+      </DockPanel>
+    </Border>
+
+    <Border DockPanel.Dock="Bottom" Background="#D8D4C4" Padding="4">
+      <UniformGrid Rows="1" Columns="5">
+        <Button Style="{StaticResource GreenButton}" Command="{Binding OpenParkingCommand}" Content="駐車場管理" Margin="2" Height="52"/>
+        <Button Style="{StaticResource GoldButton}" Command="{Binding PrintFeeListCommand}" Content="会費確認" Margin="2"/>
+        <Button Style="{StaticResource GoldButton}" Command="{Binding SearchCommand}" Content="棟情報検索" Margin="2"/>
+        <Button Style="{StaticResource OrangeButton}" Command="{Binding OpenTotalsCommand}" Content="全棟集計確認" Margin="2"/>
+        <Button Style="{StaticResource OrangeButton}" Command="{Binding PrintBuildingDetailCommand}" Content="棟情報確認" Margin="2"/>
+      </UniformGrid>
+    </Border>
+
+    <Border DockPanel.Dock="Right" Width="280" Background="{StaticResource FaceBrush}" Padding="8">
+      <DockPanel>
+        <Button DockPanel.Dock="Top" Style="{StaticResource ExitButton}" Height="52"
+                Command="{Binding ExitCommand}" Content="終了" Margin="0,0,0,4"/>
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+          <TextBlock Text="文字サイズ" FontWeight="Bold" Margin="0,0,0,2"/>
+          <UniformGrid Columns="3">
+            <Button Content="小" Command="{Binding SetFontSmallCommand}">
+              <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource SizePickButton}">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsFontSmall}" Value="True">
+                      <Setter Property="FontWeight" Value="Black"/>
+                      <Setter Property="Foreground" Value="#102080"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Button.Style>
+            </Button>
+            <Button Content="中" Command="{Binding SetFontMediumCommand}">
+              <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource SizePickButton}">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsFontMedium}" Value="True">
+                      <Setter Property="FontWeight" Value="Black"/>
+                      <Setter Property="Foreground" Value="#102080"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Button.Style>
+            </Button>
+            <Button Content="大" Command="{Binding SetFontLargeCommand}">
+              <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource SizePickButton}">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsFontLarge}" Value="True">
+                      <Setter Property="FontWeight" Value="Black"/>
+                      <Setter Property="Foreground" Value="#102080"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Button.Style>
+            </Button>
+          </UniformGrid>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4">
+          <Button Style="{StaticResource GoldButton}" Command="{Binding PrevBuildingCommand}" Content="＜ 前の棟" Padding="8,2"/>
+          <Button Style="{StaticResource GoldButton}" Command="{Binding NextBuildingCommand}" Content="次の棟 ＞" Padding="8,2"/>
+        </StackPanel>
+        <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Buildings}"
+                  SelectedItem="{Binding SelectedBuilding, Mode=TwoWay}"
+                  DisplayMemberPath="Name" Margin="0,0,0,8"/>
+
+        <TextBlock DockPanel.Dock="Top" Text="選択棟" FontWeight="Bold" Margin="0,0,0,4"/>
+        <Border DockPanel.Dock="Top" Style="{StaticResource BevelBorder}" Padding="6" Background="#F4F0E0" Margin="0,0,0,8">
+          <StackPanel>
+            <TextBlock Text="{Binding CurrentStats.Units, StringFormat='全戸  {0} 件'}"/>
+            <TextBlock Text="{Binding CurrentStats.Vacant, StringFormat='空き  {0} 件'}" Foreground="#107080"/>
+            <TextBlock Text="{Binding CurrentStats.Hospital, StringFormat='入院  {0} 件'}" Foreground="#A03050"/>
+            <TextBlock Text="{Binding CurrentStats.People, StringFormat='住人  {0} 人'}"/>
+            <TextBlock Text="{Binding CurrentStats.Bikes, StringFormat='バイク  {0} 台'}"/>
+            <TextBlock Text="{Binding CurrentStats.Bicycles, StringFormat='自転車  {0} 台'}"/>
+          </StackPanel>
+        </Border>
+
+        <TextBlock DockPanel.Dock="Top" Text="全棟合計" FontWeight="Bold" Foreground="#2040A0" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+        <Border DockPanel.Dock="Top" Style="{StaticResource BevelBorder}" Padding="6" Background="#F4F0E0" Margin="0,0,0,8">
+          <StackPanel>
+            <TextBlock Text="{Binding AllStats.Units, StringFormat='全戸  {0} 件'}"/>
+            <TextBlock Text="{Binding AllStats.Vacant, StringFormat='空き  {0} 件'}"/>
+            <TextBlock Text="{Binding AllStats.Hospital, StringFormat='入院  {0} 件'}"/>
+            <TextBlock Text="{Binding AllStats.People, StringFormat='住人  {0} 人'}"/>
+            <TextBlock Text="{Binding AllStats.Bikes, StringFormat='バイク  {0} 台'}"/>
+            <TextBlock Text="{Binding AllStats.Bicycles, StringFormat='自転車  {0} 台'}"/>
+            <TextBlock Text="{Binding ParkingOccupied, StringFormat='駐車場  {0} 台'}"/>
+          </StackPanel>
+        </Border>
+
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+          <Button Style="{StaticResource WinButton}" Command="{Binding EditBuildingCommand}"
+                  IsEnabled="{Binding Locked, Converter={StaticResource NotBool}}"
+                  Content="棟編集"/>
+          <Button Style="{StaticResource WinButton}" Command="{Binding NewBuildingCommand}" Content="棟追加"
+                  IsEnabled="{Binding Locked, Converter={StaticResource NotBool}}"/>
+          <CheckBox Content="ロック" IsChecked="{Binding Locked, Mode=OneWay}"
+                    Command="{Binding ToggleLockCommand}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,8">
+          <Button Style="{StaticResource WinButton}" Command="{Binding ChangeDatabaseCommand}"
+                  Content="DBパス" HorizontalAlignment="Left"/>
+          <Button Style="{StaticResource WinButton}" Command="{Binding BackupCommand}" Content="バックアップ"/>
+          <Button Style="{StaticResource WinButton}" Command="{Binding ExportCsvCommand}" Content="CSV出力"/>
+          <Button Style="{StaticResource WinButton}" Command="{Binding PrintFeeListCommand}" Content="会費確認"/>
+        </StackPanel>
+        <TextBlock/>
+      </DockPanel>
+    </Border>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  Background="#B8B8B8" Margin="3">
+      <ItemsControl ItemsSource="{Binding FloorRows}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type vm:FloorRowViewModel}">
+            <ItemsControl ItemsSource="{Binding Cards}" Margin="0,1"
+                          ItemTemplate="{StaticResource RoomCardTemplate}"
+                          Height="{Binding DataContext.FloorRowHeight, RelativeSource={RelativeSource AncestorType=Window}}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <UniformGrid Rows="1"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

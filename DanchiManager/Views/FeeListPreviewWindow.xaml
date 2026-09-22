@@ -1,0 +1,31 @@
+<Window x:Class="DanchiManager.Views.FeeListPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DanchiManager.ViewModels"
+        Title="{Binding Title}" Width="780" Height="900" MinHeight="480" MaxHeight="900">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <TextBlock Text="{Binding Sum, StringFormat='合計  ¥{0:N0}'}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0"/>
+      <Button Style="{StaticResource GoldButton}" Content="封筒印刷" Command="{Binding PrintEnvelopesCommand}" Width="100"/>
+      <Button Style="{StaticResource OrangeButton}" Content="印刷" Command="{Binding PrintCommand}" Width="90"/>
+      <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+      <Button Style="{StaticResource GoldButton}" Content="＜" Command="{Binding PrevYearCommand}" Width="40"/>
+      <Button Style="{StaticResource GoldButton}" Content="今年度" Command="{Binding ThisYearCommand}" Width="80"/>
+      <Button Style="{StaticResource GoldButton}" Content="＞" Command="{Binding NextYearCommand}" Width="40"/>
+      <TextBlock Text="{Binding Title}" FontWeight="Bold" VerticalAlignment="Center" Margin="12,0,0,0"/>
+    </StackPanel>
+    <ListView ItemsSource="{Binding Rows}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="棟" Width="200" DisplayMemberBinding="{Binding Building}"/>
+          <GridViewColumn Header="号室" Width="80" DisplayMemberBinding="{Binding RoomNo}"/>
+          <GridViewColumn Header="氏名" Width="180" DisplayMemberBinding="{Binding Name}"/>
+          <GridViewColumn Header="会費合計" Width="110" DisplayMemberBinding="{Binding Total, StringFormat=N0}"/>
+          <GridViewColumn Header="会員" Width="70" DisplayMemberBinding="{Binding MemberMark}"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
+  </DockPanel>
+</Window>

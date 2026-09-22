@@ -1,0 +1,28 @@
+<Window x:Class="DanchiManager.Views.EnvelopePreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DanchiManager.ViewModels"
+        Title="{Binding Title}" Width="720" Height="900" MinHeight="480" MaxHeight="900">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <TextBlock Text="{Binding Count, StringFormat='件数 {0}'}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+      <Button Style="{StaticResource OrangeButton}" Content="印刷" Command="{Binding PrintCommand}" Width="90"
+              IsEnabled="{Binding CanPrint}"/>
+      <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+      <TextBlock Text="{Binding Title}" FontWeight="Bold" Margin="0,0,0,6"/>
+      <CheckBox Content="全棟を対象にする（外すと現在の棟のみ）" IsChecked="{Binding AllBuildings}"/>
+    </StackPanel>
+    <ListView ItemsSource="{Binding Recipients}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="棟" Width="200" DisplayMemberBinding="{Binding BuildingName}"/>
+          <GridViewColumn Header="号室" Width="80" DisplayMemberBinding="{Binding RoomNo}"/>
+          <GridViewColumn Header="氏名" Width="180" DisplayMemberBinding="{Binding Name}"/>
+          <GridViewColumn Header="電話" Width="140" DisplayMemberBinding="{Binding Phone}"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
+  </DockPanel>
+</Window>

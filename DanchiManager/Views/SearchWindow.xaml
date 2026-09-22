@@ -1,0 +1,27 @@
+<Window x:Class="DanchiManager.Views.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DanchiManager.ViewModels"
+        Title="検索" Width="720" Height="900" MinHeight="480" MaxHeight="900">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button Style="{StaticResource WinButton}" Content="この部屋を開く" Command="{Binding ChooseCommand}" Width="120"/>
+      <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CancelCommand}" Width="80" IsCancel="True"/>
+    </StackPanel>
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+      <TextBlock Text="氏名・フリガナ・号室・電話" VerticalAlignment="Center" Margin="0,0,8,0"/>
+      <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"/>
+    </DockPanel>
+    <ListView ItemsSource="{Binding Hits}" SelectedItem="{Binding Selected}" MouseDoubleClick="OnDoubleClick">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="棟" Width="160" DisplayMemberBinding="{Binding BuildingName}"/>
+          <GridViewColumn Header="号室" Width="70" DisplayMemberBinding="{Binding RoomNo}"/>
+          <GridViewColumn Header="氏名" Width="140" DisplayMemberBinding="{Binding Name}"/>
+          <GridViewColumn Header="フリガナ" Width="140" DisplayMemberBinding="{Binding Furigana}"/>
+          <GridViewColumn Header="電話" Width="110" DisplayMemberBinding="{Binding Phone}"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
+  </DockPanel>
+</Window>

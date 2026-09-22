@@ -1,0 +1,82 @@
+<Window x:Class="DanchiManager.Views.ParkingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DanchiManager.ViewModels"
+        Title="駐車場管理" Width="1020" Height="900" MinHeight="480" MaxHeight="900">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <TextBlock Text="{Binding OccupiedTotal, StringFormat='使用中 {0} 台'}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+      <Button Style="{StaticResource WinButton}" Content="保存して閉じる" Command="{Binding SaveCommand}" Width="120"/>
+      <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
+    </StackPanel>
+    <DockPanel DockPanel.Dock="Left" Width="220" Margin="0,0,12,0">
+      <UniformGrid DockPanel.Dock="Bottom" Columns="2" Margin="0,8,0,0">
+        <Button Style="{StaticResource GoldButton}" Content="追加" Command="{Binding AddLotCommand}"/>
+        <Button Style="{StaticResource OrangeButton}" Content="削除" Command="{Binding DeleteLotCommand}"/>
+      </UniformGrid>
+      <ListBox ItemsSource="{Binding Lots}" SelectedItem="{Binding SelectedLot}" DisplayMemberPath="Name"/>
+    </DockPanel>
+    <DockPanel>
+      <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="100"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="駐車場名" VerticalAlignment="Center" Margin="0,0,8,0"/>
+        <TextBox Grid.Column="1" Text="{Binding SelectedLot.Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBlock Grid.Column="2" Text="月額" VerticalAlignment="Center" Margin="12,0,8,0"/>
+        <TextBox Grid.Column="3" Text="{Binding SelectedLot.Fee, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Grid.Column="4" Style="{StaticResource GoldButton}" Content="更新" Command="{Binding UpdateLotCommand}" Margin="8,0,0,0" Width="80"/>
+      </Grid>
+      <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,8,0,0">
+        <Button Style="{StaticResource GoldButton}" Content="枠を追加" Command="{Binding AddSlotCommand}" Width="100"/>
+        <Button Style="{StaticResource OrangeButton}" Content="枠を削除" Command="{Binding DeleteSlotCommand}" Width="100"/>
+        <TextBlock Text="利用不可にすると使用者・車番は入力できません。番号は1から連番です。" VerticalAlignment="Center" Margin="12,0,0,0" Opacity="0.75"/>
+      </StackPanel>
+      <ListView ItemsSource="{Binding SelectedLot.Slots}"
+                SelectedItem="{Binding SelectedSlot}">
+        <ListView.ItemContainerStyle>
+          <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsInvalid}" Value="True">
+                <Setter Property="Background" Value="#D8D8D8"/>
+                <Setter Property="Foreground" Value="#666"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.View>
+          <GridView>
+            <GridViewColumn Header="番号" Width="70" DisplayMemberBinding="{Binding No}"/>
+            <GridViewColumn Header="利用不可" Width="90">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <CheckBox IsChecked="{Binding IsInvalid, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="使用者" Width="260">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBox Text="{Binding Occupant, UpdateSourceTrigger=PropertyChanged}" MinWidth="220"
+                           IsEnabled="{Binding IsInvalid, Converter={StaticResource NotBool}}"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="車番" Width="200">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBox Text="{Binding CarNo, UpdateSourceTrigger=PropertyChanged}" MinWidth="160"
+                           IsEnabled="{Binding IsInvalid, Converter={StaticResource NotBool}}"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+          </GridView>
+        </ListView.View>
+      </ListView>
+    </DockPanel>
+  </DockPanel>
+</Window>

@@ -1,0 +1,25 @@
+<Window x:Class="DanchiManager.Views.TotalsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DanchiManager.ViewModels"
+        Title="{Binding Title}" Width="840" Height="900" MinHeight="480" MaxHeight="900">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button Style="{StaticResource OrangeButton}" Content="印刷" Command="{Binding PrintCommand}" Width="90"/>
+      <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
+    </StackPanel>
+    <ListView ItemsSource="{Binding Rows}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="棟" Width="180" DisplayMemberBinding="{Binding Name}"/>
+          <GridViewColumn Header="戸数" Width="70" DisplayMemberBinding="{Binding Stats.Units}"/>
+          <GridViewColumn Header="空き" Width="70" DisplayMemberBinding="{Binding Stats.Vacant}"/>
+          <GridViewColumn Header="入院" Width="70" DisplayMemberBinding="{Binding Stats.Hospital}"/>
+          <GridViewColumn Header="人数" Width="70" DisplayMemberBinding="{Binding Stats.People}"/>
+          <GridViewColumn Header="バイク" Width="70" DisplayMemberBinding="{Binding Stats.Bikes}"/>
+          <GridViewColumn Header="自転車" Width="70" DisplayMemberBinding="{Binding Stats.Bicycles}"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
+  </DockPanel>
+</Window>

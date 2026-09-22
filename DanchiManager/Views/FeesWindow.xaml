@@ -1,0 +1,40 @@
+<Window x:Class="DanchiManager.Views.FeesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DanchiManager.ViewModels"
+        Title="{Binding Title}" Width="520" Height="780"
+        MinHeight="640" MaxHeight="900" ResizeMode="NoResize">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button Style="{StaticResource WinButton}" Content="登録" Command="{Binding SaveCommand}" Width="90"/>
+      <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CancelCommand}" Width="80" IsCancel="True"/>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+      <Button Style="{StaticResource GoldButton}" Content="＜" Command="{Binding PrevYearCommand}" Width="40"/>
+      <Button Style="{StaticResource GoldButton}" Content="今年度" Command="{Binding ThisYearCommand}" Width="70"/>
+      <Button Style="{StaticResource GoldButton}" Content="＞" Command="{Binding NextYearCommand}" Width="40"/>
+      <Button Style="{StaticResource WinButton}" Content="全選択/解除" Command="{Binding ToggleAllCommand}"/>
+    </StackPanel>
+    <TextBlock DockPanel.Dock="Bottom" Text="{Binding TotalText, StringFormat='合計  ¥{0}'}"
+               FontWeight="Bold" HorizontalAlignment="Right" Margin="0,8,0,8"
+               FontSize="{Binding FontSize, Source={x:Static vm:UiSettings.Current}, Converter={StaticResource Scale}, ConverterParameter=1.2}"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <ItemsControl ItemsSource="{Binding Fee.Months}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="0,2" MinHeight="{Binding ListRowHeight, Source={x:Static vm:UiSettings.Current}}">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="48"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+              <CheckBox Grid.Column="1" IsChecked="{Binding Paid, Mode=TwoWay}" VerticalAlignment="Center"/>
+              <TextBox Grid.Column="2" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left"/>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</Window>
