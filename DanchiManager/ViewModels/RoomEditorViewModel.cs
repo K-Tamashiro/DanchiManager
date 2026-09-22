@@ -9,20 +9,25 @@ public partial class RoomEditorViewModel : ObservableObject
 {
     readonly DatabaseService _db;
     readonly IDialogService _dialogs;
+    readonly Action _onSaved;
 
     [ObservableProperty] private RoomRecord _draft;
     [ObservableProperty] private string _buildingTitle = "";
     [ObservableProperty] private int _feeYear = AppConstants.FiscalWarekiYear();
 
-    public RoomEditorViewModel(DatabaseService db, IDialogService dialogs, RoomRecord source)
+    public RoomEditorViewModel(DatabaseService db, IDialogService dialogs, RoomRecord source, Action onSaved)
     {
         _db = db;
         _dialogs = dialogs;
+        _onSaved = onSaved;
         Draft = source.Clone();
         BuildingTitle = $"{source.BuildingName}  {source.RoomNo} 号室";
         if (Draft.Vacancy == VacancyFlag.Vacant && string.IsNullOrWhiteSpace(Draft.Name))
             Draft.Gender = GenderFlag.Unset;
     }
+
+    public VacancyFlag[] Vacancies { get; } = [VacancyFlag.Vacant, VacancyFlag.Hospital, VacancyFlag.Occupied];
+    public GenderFlag[] Genders { get; } = [GenderFlag.Male, GenderFlag.Female, GenderFlag.Unset];
 
     [RelayCommand]
     private void Save()
@@ -38,6 +43,7 @@ public partial class RoomEditorViewModel : ObservableObject
                 return;
         }
         _db.UpsertRoom(Draft);
+        _onSaved();
         CloseOk();
     }
 
@@ -47,6 +53,7 @@ public partial class RoomEditorViewModel : ObservableObject
         if (!_dialogs.Confirm($"{Draft.BuildingName}の部屋番号【{Draft.RoomNo}】の情報を削除します。\n\nよろしいですか。", "部屋情報の削除"))
             return;
         _db.ClearRoom(Draft.BuildingName, Draft.RoomNo, Draft.SortOrder, Draft.Note);
+        _onSaved();
         CloseOk();
     }
 
@@ -61,7 +68,7 @@ public partial class RoomEditorViewModel : ObservableObject
     private void OpenFees()
     {
         var fee = _db.LoadFees(Draft.BuildingName, Draft.RoomNo, FeeYear, Draft.Name, Draft.SortOrder);
-        var vm = new FeesViewModel(_db, fee);
+        var vm = new FeesViewModel(_db, _dialogs, new PrintService(), fee, Draft);
         _dialogs.ShowFees(vm);
     }
 

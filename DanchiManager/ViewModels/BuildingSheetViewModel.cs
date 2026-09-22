@@ -10,6 +10,7 @@ public partial class BuildingSheetViewModel : ObservableObject
 {
     readonly DatabaseService _db;
     readonly PrintService _print;
+    readonly IDialogService _dialogs;
     readonly List<Building> _buildings;
 
     public ObservableCollection<RoomRecord> Rooms { get; } = [];
@@ -18,10 +19,11 @@ public partial class BuildingSheetViewModel : ObservableObject
     [ObservableProperty] private string _title = "棟情報確認";
     [ObservableProperty] private BuildingStats _stats;
 
-    public BuildingSheetViewModel(DatabaseService db, PrintService print, IEnumerable<Building> buildings, Building? current)
+    public BuildingSheetViewModel(DatabaseService db, PrintService print, IEnumerable<Building> buildings, Building? current, IDialogService dialogs)
     {
         _db = db;
         _print = print;
+        _dialogs = dialogs;
         _buildings = buildings.ToList();
         SelectedBuilding = current ?? _buildings.FirstOrDefault();
     }
@@ -70,7 +72,11 @@ public partial class BuildingSheetViewModel : ObservableObject
     [RelayCommand]
     private void PrintAllBuildings()
     {
-        var reports = _buildings.Select(building =>
+        var pick = new BuildingPickViewModel(_buildings);
+        if (_dialogs.ShowBuildingPick(pick) != true) return;
+        var selected = pick.SelectedBuildings;
+        if (selected.Count == 0) return;
+        var reports = selected.Select(building =>
         {
             var rooms = _db.LoadRooms(building.Name);
             return ($"{building.Name}  (全 {rooms.Count} 戸)", rooms, _db.Stats(building.Name));

@@ -1,0 +1,34 @@
+<Window x:Class="DanchiManager.Views.ParkingPickWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Title}" Width="520" Height="900" MinHeight="480" MaxHeight="900">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <TextBlock Text="{Binding Count, StringFormat='選択 {0} 箇所'}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+      <Button Style="{StaticResource OrangeButton}" Content="プレビュー" Command="{Binding ConfirmCommand}" Width="110"/>
+      <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CancelCommand}" Width="80" IsCancel="True"/>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+      <TextBlock Text="印刷する駐車場" Style="{StaticResource DialogHeading}" Margin="0,0,0,8"/>
+      <StackPanel Orientation="Horizontal">
+        <Button Style="{StaticResource GoldButton}" Content="全部オン" Command="{Binding CheckAllCommand}" Width="110"/>
+        <Button Style="{StaticResource WinButton}" Content="全部オフ" Command="{Binding ClearAllCommand}" Width="110"/>
+      </StackPanel>
+    </StackPanel>
+    <ListView ItemsSource="{Binding Items}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="印刷" Width="70">
+            <GridViewColumn.CellTemplate>
+              <DataTemplate>
+                <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </DataTemplate>
+            </GridViewColumn.CellTemplate>
+          </GridViewColumn>
+          <GridViewColumn Header="駐車場" Width="360" DisplayMemberBinding="{Binding Name}"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
+  </DockPanel>
+</Window>

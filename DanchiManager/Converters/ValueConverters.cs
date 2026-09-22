@@ -28,6 +28,14 @@ public sealed class BoolToVisibilityConverter : IValueConverter
     public object ConvertBack(object value, Type t, object p, CultureInfo c) => Binding.DoNothing;
 }
 
+public sealed class NullToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type t, object p, CultureInfo c) =>
+        value is null ? Visibility.Collapsed : Visibility.Visible;
+
+    public object ConvertBack(object value, Type t, object p, CultureInfo c) => Binding.DoNothing;
+}
+
 public sealed class FloorHeaderConverter : IMultiValueConverter
 {
     static readonly Color[] Floors =
@@ -50,6 +58,8 @@ public sealed class FloorHeaderConverter : IMultiValueConverter
         var roomNo = values[2] as string ?? "101";
         if (vacancy == VacancyFlag.Hospital)
             return Brush(Color.FromRgb(0xF0, 0x70, 0x90), Color.FromRgb(0xD0, 0x50, 0x70));
+        if (vacancy == VacancyFlag.Vacant)
+            return Brush(Color.FromRgb(0x5A, 0x5A, 0x5A), Color.FromRgb(0x3A, 0x3A, 0x3A));
         if (vacancy != VacancyFlag.Vacant && gender == GenderFlag.Male)
             return Brush(Color.FromRgb(0x90, 0xC8, 0xF0), Color.FromRgb(0x58, 0x90, 0xC0));
         if (vacancy != VacancyFlag.Vacant && gender == GenderFlag.Female)
@@ -111,4 +121,19 @@ public sealed class EnumEqualsConverter : IValueConverter
         if (enumType.IsEnum) return Enum.Parse(enumType, name);
         return Binding.DoNothing;
     }
+}
+
+public sealed class RoomRowWidthConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (values.Length < 2 || values[1] is not int count || count <= 0) return 0d;
+        var viewport = values[0] is double width && double.IsFinite(width) ? Math.Max(0, width) : 0;
+        // カード本体174 + 左右のMargin各2。横に見せる列数は最大9列。
+        var slotWidth = Math.Max(178d, viewport / Math.Min(count, 9));
+        return slotWidth * count;
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
 }

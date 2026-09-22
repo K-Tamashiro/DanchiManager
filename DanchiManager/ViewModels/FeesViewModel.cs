@@ -8,13 +8,19 @@ namespace DanchiManager.ViewModels;
 public partial class FeesViewModel : ObservableObject
 {
     readonly DatabaseService _db;
+    readonly IDialogService _dialogs;
+    readonly PrintService _print;
+    readonly RoomRecord? _envelopeRoom;
 
     [ObservableProperty] private FeeYear _fee;
     [ObservableProperty] private string _title = "";
 
-    public FeesViewModel(DatabaseService db, FeeYear fee)
+    public FeesViewModel(DatabaseService db, IDialogService dialogs, PrintService print, FeeYear fee, RoomRecord? envelopeRoom = null)
     {
         _db = db;
+        _dialogs = dialogs;
+        _print = print;
+        _envelopeRoom = envelopeRoom?.Clone();
         Fee = fee;
         Title = $"令和{fee.Year:00}年度 会費集金情報";
         foreach (var m in Fee.Months)
@@ -70,6 +76,14 @@ public partial class FeesViewModel : ObservableObject
     }
 
     void SaveSilent() => _db.SaveFees(Fee);
+
+    [RelayCommand]
+    private void PrintEnvelope()
+    {
+        SaveSilent();
+        var vm = new EnvelopePreviewViewModel(_db, _print, Fee.BuildingName, Fee.Year, Fee.RoomNo, _envelopeRoom);
+        _dialogs.ShowEnvelopes(vm);
+    }
 
     [RelayCommand] private void Cancel() => RequestClose?.Invoke(this, false);
 

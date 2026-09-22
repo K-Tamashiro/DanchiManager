@@ -101,6 +101,10 @@ public sealed class PrintService
 
     public void PrintEnvelopes(int year, IEnumerable<RoomRecord> members)
     {
+        var settings = PathService.LoadSettings();
+        var startMonth = settings.EnvelopeStartMonth is >= 1 and <= 12 ? settings.EnvelopeStartMonth : 4;
+        var months = Enumerable.Range(0, 12).Select(i => $"{(startMonth - 1 + i) % 12 + 1}月").ToArray();
+        var title = string.IsNullOrWhiteSpace(settings.EnvelopeTitle) ? AppConstants.AssociationTitle : settings.EnvelopeTitle;
         var monthly = AppConstants.DefaultFee;
         var yearly = monthly * 12;
         var doc = new FlowDocument
@@ -113,7 +117,7 @@ public sealed class PrintService
         foreach (var r in members)
         {
             var sec = new Section { BreakPageBefore = doc.Blocks.Count > 0 };
-            sec.Blocks.Add(P(AppConstants.AssociationTitle, 16, FontWeights.Bold, TextAlignment.Center, 4));
+            sec.Blocks.Add(P(title, 16, FontWeights.Bold, TextAlignment.Center, 4));
             sec.Blocks.Add(P($"令和 {year} 年度分    {r.Name}  様", 16, FontWeights.Bold, TextAlignment.Center, 4));
             sec.Blocks.Add(P($"{r.BuildingName}  {r.RoomNo}  号", 12, FontWeights.Normal, TextAlignment.Center, 4));
             sec.Blocks.Add(P($"自治会費 毎月{monthly}円です。年間{yearly}円です。", 10, FontWeights.Normal, TextAlignment.Center, 6));
@@ -124,12 +128,12 @@ public sealed class PrintService
             var group = new TableRowGroup();
             pair.RowGroups.Add(group);
             var row = new TableRow();
-            row.Cells.Add(new TableCell(MonthStampTable(["4月", "5月", "6月", "7月", "8月", "9月"]))
+            row.Cells.Add(new TableCell(MonthStampTable(months[..6]))
             {
                 BorderThickness = new Thickness(0),
                 Padding = new Thickness(0, 4, 3, 0),
             });
-            row.Cells.Add(new TableCell(MonthStampTable(["10月", "11月", "12月", "1月", "2月", "3月"]))
+            row.Cells.Add(new TableCell(MonthStampTable(months[6..]))
             {
                 BorderThickness = new Thickness(0),
                 Padding = new Thickness(3, 4, 0, 0),
@@ -360,77 +364,93 @@ public sealed class PrintService
 
         printButton.Click += (_, _) =>
         {
-            if (widthMm is double wmm && heightMm is double hmm)
+            var padding = doc.PagePadding;
+            printButton.IsEnabled = false;
+            try
             {
-                // 会費封筒：
-                // 指定サイズでプレビュー後、Windowsの印刷ダイアログを表示する。
-                // 印刷時はプリンター側に登録した「会費封筒」を選択する。
-                Print(doc, description, wmm, hmm);
+                if (widthMm.HasValue && heightMm.HasValue)
+                    Print(doc, description, widthMm.Value, heightMm.Value);
+                else
+                    DirectPrint(doc, description, 210, 297);
             }
-            else
+            catch (Exception ex)
             {
-                // 通常帳票：
-                // A4で既定プリンターへ直接印刷する。
-                DirectPrint(doc, description, 210, 297);
+                MessageBox.Show(window,
+                    $"印刷できませんでした。プリンターと用紙設定を確認してください。\n\n{ex.Message}",
+                    "印刷エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                doc.PagePadding = padding;
+                ConfigurePage(doc, width, height);
+                printButton.IsEnabled = true;
             }
         };
 
+        // Ctrl+Pも同じ設定・エラー処理を通す。
+        viewer.CommandBindings.Add(new System.Windows.Input.CommandBinding(
+            System.Windows.Input.ApplicationCommands.Print, (_, e) =>
+            {
+                printButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                e.Handled = true;
+            }));
         closeButton.Click += (_, _) => window.Close();
         window.ShowDialog();
     }
 
-    /// <summary>
-    /// ダイレクト印刷する
-    /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="description"></param>
-    /// <param name="widthMm"></param>
-    /// <param name="heightMm"></param>
-    static void DirectPrint(
-    FlowDocument doc,
-    string description,
-    double widthMm,
-    double heightMm)
+    static void DirectPrint(FlowDocument doc, string description, double widthMm, double heightMm)
     {
-        var server = new LocalPrintServer();
-        var queue = server.DefaultPrintQueue;
-
-        var ticket = queue.DefaultPrintTicket;
-        ticket.PageMediaSize = new PageMediaSize(
-            Mm(widthMm),
-            Mm(heightMm));
-
-        var width = Mm(widthMm);
-        var height = Mm(heightMm);
-
-        ConfigurePage(doc, width, height);
-
-        IDocumentPaginatorSource src = doc;
-
+        using var server = new LocalPrintServer();
+        using var queue = server.DefaultPrintQueue
+            ?? throw new InvalidOperationException("既定のプリンターが設定されていません。");
+        var ticket = queue.DefaultPrintTicket?.Clone() ?? new PrintTicket();
+        ticket.PageMediaSize = new PageMediaSize(Mm(widthMm), Mm(heightMm));
+        ticket = PreparePrint(doc, queue, ticket, widthMm, heightMm);
+        queue.CurrentJobSettings.Description = description;
         var writer = PrintQueue.CreateXpsDocumentWriter(queue);
-        writer.Write(src.DocumentPaginator, ticket);
+        writer.Write(((IDocumentPaginatorSource)doc).DocumentPaginator, ticket);
     }
 
-    static void Print(
-        FlowDocument doc,
-        string description,
-        double widthMm,
-        double heightMm)
+    static void Print(FlowDocument doc, string description, double widthMm, double heightMm)
     {
         var dlg = new PrintDialog();
-
-        if (dlg.ShowDialog() != true)
-            return;
-
-        // FlowDocumentのレイアウトは指定された用紙サイズのまま印刷する。
-        // 会費封筒では、プリンター側に登録した「会費封筒」を
-        // Windowsの印刷ダイアログで選択して使用する。
-        ConfigurePage(doc, Mm(widthMm), Mm(heightMm));
-
-        IDocumentPaginatorSource src = doc;
-        dlg.PrintDocument(src.DocumentPaginator, description);
+        if (dlg.ShowDialog() != true) return;
+        var queue = dlg.PrintQueue
+            ?? throw new InvalidOperationException("プリンターが選択されていません。");
+        // 選択した封筒用紙を保持し、検証後のチケットを実際の印刷にも使う。
+        var ticket = dlg.PrintTicket?.Clone() ?? new PrintTicket();
+        dlg.PrintTicket = PreparePrint(doc, queue, ticket, widthMm, heightMm);
+        dlg.PrintDocument(((IDocumentPaginatorSource)doc).DocumentPaginator, description);
     }
 
+    static PrintTicket PreparePrint(FlowDocument doc, PrintQueue queue, PrintTicket ticket,
+        double widthMm, double heightMm)
+    {
+        ticket.PageOrientation = PageOrientation.Portrait;
+        var validated = queue.MergeAndValidatePrintTicket(queue.DefaultPrintTicket, ticket).ValidatedPrintTicket;
+        var size = validated.PageMediaSize;
+        var width = Mm(widthMm);
+        var height = Mm(heightMm);
+        if (size?.Width is not double actualWidth || size.Height is not double actualHeight ||
+            Math.Abs(actualWidth - width) > Mm(1) || Math.Abs(actualHeight - height) > Mm(1) ||
+            validated.PageOrientation != PageOrientation.Portrait)
+            throw new InvalidOperationException(
+                $"用紙を縦向き {widthMm} × {heightMm} mm に設定してください。プリンターがこの設定に対応しているか確認してください。");
+
+        var area = queue.GetPrintCapabilities(validated).PageImageableArea
+            ?? throw new InvalidOperationException("プリンターの印刷可能領域を取得できませんでした。");
+        var padding = doc.PagePadding;
+        var safePadding = new Thickness(
+            Math.Max(padding.Left, area.OriginWidth),
+            Math.Max(padding.Top, area.OriginHeight),
+            Math.Max(padding.Right, width - area.OriginWidth - area.ExtentWidth),
+            Math.Max(padding.Bottom, height - area.OriginHeight - area.ExtentHeight));
+        if (safePadding.Left + safePadding.Right >= width || safePadding.Top + safePadding.Bottom >= height)
+            throw new InvalidOperationException("用紙の印刷可能領域が小さすぎます。用紙設定を確認してください。");
+        doc.PagePadding = safePadding;
+        ConfigurePage(doc, width, height);
+        return validated;
+    }
     static void ConfigurePage(FlowDocument doc, double width, double height)
     {
         // Use one full-width column instead of FlowDocument's default newspaper columns.

@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>danchimanger.ico</ApplicationIcon>
     <RootNamespace>DanchiManager</RootNamespace>
     <AssemblyName>DanchiManager</AssemblyName>
     <Product>団地管理マネージャー</Product>
@@ -18,5 +19,8 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="danchimanger.ico" />
   </ItemGroup>
 </Project>

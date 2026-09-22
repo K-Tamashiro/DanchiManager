@@ -110,7 +110,11 @@ public partial class ParkingViewModel : ObservableObject
     private void Print()
     {
         if (Lots.Count == 0) return;
-        _print.PrintParking(Lots);
+        var pick = new ParkingPickViewModel(Lots);
+        if (_dialogs.ShowParkingPick(pick) != true) return;
+        var selected = pick.SelectedLots;
+        if (selected.Count == 0) return;
+        _print.PrintParking(selected);
     }
 
     [RelayCommand] private void Close() => RequestClose?.Invoke(this, true);

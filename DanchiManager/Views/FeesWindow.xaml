@@ -5,8 +5,8 @@
         Title="{Binding Title}" Width="520" Height="780"
         MinHeight="640" MaxHeight="900" ResizeMode="NoResize">
   <DockPanel Margin="12">
-    <TextBlock DockPanel.Dock="Top" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource DialogHeading}" Margin="0,0,0,8"/>
     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button Style="{StaticResource OrangeButton}" Content="会費封筒印刷" Command="{Binding PrintEnvelopeCommand}" Width="130"/>
       <Button Style="{StaticResource WinButton}" Content="登録" Command="{Binding SaveCommand}" Width="90"/>
       <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CancelCommand}" Width="80" IsCancel="True"/>
     </StackPanel>

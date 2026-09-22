@@ -50,6 +50,7 @@
   </LinearGradientBrush>
 
   <Style TargetType="Window">
+    <Setter Property="Icon" Value="pack://application:,,,/DanchiManager;component/danchimanger.ico"/>
     <Setter Property="FontFamily" Value="Yu Gothic UI, Meiryo UI, Meiryo"/>
     <Setter Property="FontSize" Value="{Binding FontSize, Source={x:Static vm:UiSettings.Current}}"/>
     <Setter Property="Background" Value="{StaticResource FaceBrush}"/>

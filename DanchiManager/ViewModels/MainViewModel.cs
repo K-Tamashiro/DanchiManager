@@ -26,7 +26,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public ObservableCollection<RoomCardViewModel> Slots { get; } = [];
     public ObservableCollection<FloorRowViewModel> FloorRows { get; } = [];
 
-    public string Title => "団地管理";
+    public string Title => _settings.WindowTitle;
     public bool IsFontSmall => Math.Abs(UiFontSize - 14) < 0.1;
     public bool IsFontMedium => Math.Abs(UiFontSize - 16) < 0.1;
     public bool IsFontLarge => Math.Abs(UiFontSize - 18) < 0.1;
@@ -40,9 +40,30 @@ public partial class MainViewModel : ObservableObject, IDisposable
         UiFontSize = NormalizeFont(_settings.UiFontSize);
         UiSettings.Current.FontSize = UiFontSize;
         DbPathDisplay = db.FilePath;
-        Reload(selectName: null);
+        Reload(_settings.LastBuildingName);
     }
 
+    [RelayCommand]
+    private void OpenSettings()
+    {
+        var vm = new SettingsViewModel(_settings, _dialogs);
+        if (_dialogs.ShowSettings(vm) != true) return;
+        var previous = (_settings.WindowTitle, _settings.EnvelopeTitle, _settings.EnvelopeStartMonth);
+        _settings.WindowTitle = vm.WindowTitle.Trim();
+        _settings.EnvelopeTitle = vm.EnvelopeTitle.Trim();
+        _settings.EnvelopeStartMonth = vm.EnvelopeStartMonth;
+        try
+        {
+            PathService.SaveSettings(_settings);
+        }
+        catch (Exception ex)
+        {
+            (_settings.WindowTitle, _settings.EnvelopeTitle, _settings.EnvelopeStartMonth) = previous;
+            _dialogs.Info($"設定を保存できませんでした。\n{ex.Message}");
+            return;
+        }
+        OnPropertyChanged(nameof(Title));
+    }
     static double NormalizeFont(int size) => size switch
     {
         12 => 14,
@@ -65,7 +86,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public void Reload(string? selectName)
     {
-        var keep = selectName ?? SelectedBuilding?.Name;
+        var keep = selectName ?? SelectedBuilding?.Name ?? _settings.LastBuildingName;
         Buildings.Clear();
         foreach (var b in _db.LoadBuildings()) Buildings.Add(b);
         var selected = Buildings.FirstOrDefault(b => b.Name == keep) ?? Buildings.FirstOrDefault();
@@ -75,7 +96,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
             SelectedBuilding = selected;
     }
 
-    partial void OnSelectedBuildingChanged(Building? value) => RebuildSlots();
+    partial void OnSelectedBuildingChanged(Building? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value?.Name) && _settings.LastBuildingName != value.Name)
+        {
+            _settings.LastBuildingName = value.Name;
+            PathService.SaveSettings(_settings);
+        }
+        RebuildSlots();
+    }
 
     void RebuildSlots()
     {
@@ -129,7 +158,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         foreach (var slot in Slots) slot.IsSelected = false;
         card.IsSelected = true;
         var live = _db.LoadRoom(card.Room.BuildingName, card.Room.RoomNo) ?? card.Room;
-        var vm = new RoomEditorViewModel(_db, _dialogs, live);
+        var vm = new RoomEditorViewModel(_db, _dialogs, live, RebuildSlots);
         _dialogs.ShowRoom(vm);
         RebuildSlots();
     }
@@ -196,7 +225,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void OpenTotals()
     {
-        var vm = new TotalsViewModel(_db, _print, ParkingOccupied);
+        var vm = new TotalsViewModel(_db, _print, ParkingOccupied, name =>
+        {
+            var b = Buildings.FirstOrDefault(x => x.Name == name);
+            if (b is not null) SelectedBuilding = b;
+        });
         _dialogs.ShowTotals(vm);
     }
 
@@ -204,7 +237,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void PrintBuildingDetail()
     {
         if (SelectedBuilding is null) return;
-        var vm = new BuildingSheetViewModel(_db, _print, Buildings, SelectedBuilding);
+        var vm = new BuildingSheetViewModel(_db, _print, Buildings, SelectedBuilding, _dialogs);
         _dialogs.ShowBuildingSheet(vm);
     }
 

@@ -9,7 +9,9 @@
       <Button Style="{StaticResource OrangeButton}" Content="印刷" Command="{Binding PrintCommand}" Width="90"/>
       <Button Style="{StaticResource WinButton}" Content="閉じる" Command="{Binding CloseCommand}" Width="80" IsCancel="True"/>
     </StackPanel>
-    <ListView ItemsSource="{Binding Rows}">
+    <ListView ItemsSource="{Binding Rows}"
+              SelectedItem="{Binding SelectedRow}"
+              MouseDoubleClick="OnListDoubleClick">
       <ListView.View>
         <GridView>
           <GridViewColumn Header="棟" Width="180" DisplayMemberBinding="{Binding Name}"/>
