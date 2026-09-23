@@ -9,3 +9,4 @@ obj/
 *.db-journal
 *.sqlite
 *.sqlite3
+release/

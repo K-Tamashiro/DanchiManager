@@ -344,8 +344,15 @@ public sealed class DatabaseService : IDisposable
             Name = name,
             SortOrder = sortOrder,
         };
+        var settings = PathService.LoadSettings();
+        var standard = settings.MonthlyFee > 0 ? settings.MonthlyFee : AppConstants.DefaultFee;
+        var start = settings.EnvelopeStartMonth is >= 1 and <= 12 ? settings.EnvelopeStartMonth : 4;
         for (var i = 0; i < 12; i++)
-            fee.Months.Add(new FeeMonth { Month = i, Amount = 0 });
+        {
+            var calendar = (start - 1 + i) % 12 + 1;
+            var fiscal = (calendar + 8) % 12;
+            fee.Months.Add(new FeeMonth { Month = fiscal, Amount = 0, Standard = standard });
+        }
 
         using var cmd = _cnn.CreateCommand();
         cmd.CommandText = """SELECT "月","会費" FROM kaihi WHERE "棟"=$b AND "部屋番号"=$r AND "年度"=$y ORDER BY "月" """;
@@ -357,7 +364,8 @@ public sealed class DatabaseService : IDisposable
         {
             var m = Convert.ToInt32(reader.GetValue(0));
             var amt = reader.IsDBNull(1) ? 0 : Convert.ToInt32(reader.GetValue(1));
-            if (m is >= 0 and < 12) fee.Months[m].Amount = amt;
+            if (fee.Months.FirstOrDefault(x => x.Month == m) is { } slot)
+                slot.Amount = amt;
         }
         return fee;
     }

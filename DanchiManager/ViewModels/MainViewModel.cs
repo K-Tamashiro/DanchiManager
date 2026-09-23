@@ -48,22 +48,64 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         var vm = new SettingsViewModel(_settings, _dialogs);
         if (_dialogs.ShowSettings(vm) != true) return;
-        var previous = (_settings.WindowTitle, _settings.EnvelopeTitle, _settings.EnvelopeStartMonth);
+        var previousNotes = NotesOf(_settings);
+        var previousFee = _settings.MonthlyFee;
+        var previous = (_settings.WindowTitle, _settings.EnvelopeTitle, _settings.EnvelopeStartMonth,
+            _settings.PhonePrefix1, _settings.PhonePrefix2, _settings.PhonePrefix3, _settings.PhonePrefix4, _settings.PhonePrefix5);
         _settings.WindowTitle = vm.WindowTitle.Trim();
         _settings.EnvelopeTitle = vm.EnvelopeTitle.Trim();
         _settings.EnvelopeStartMonth = vm.EnvelopeStartMonth;
+        _settings.MonthlyFee = vm.MonthlyFee < 0 ? 0 : vm.MonthlyFee;
+        _settings.PhonePrefix1 = TrimPrefix(vm.PhonePrefix1);
+        _settings.PhonePrefix2 = TrimPrefix(vm.PhonePrefix2);
+        _settings.PhonePrefix3 = TrimPrefix(vm.PhonePrefix3);
+        _settings.PhonePrefix4 = TrimPrefix(vm.PhonePrefix4);
+        _settings.PhonePrefix5 = TrimPrefix(vm.PhonePrefix5);
+        WriteNotes(_settings, [
+            vm.NoteButton1, vm.NoteButton2, vm.NoteButton3, vm.NoteButton4, vm.NoteButton5,
+            vm.NoteButton6, vm.NoteButton7, vm.NoteButton8, vm.NoteButton9, vm.NoteButton10,
+        ]);
         try
         {
             PathService.SaveSettings(_settings);
         }
         catch (Exception ex)
         {
-            (_settings.WindowTitle, _settings.EnvelopeTitle, _settings.EnvelopeStartMonth) = previous;
+            (_settings.WindowTitle, _settings.EnvelopeTitle, _settings.EnvelopeStartMonth,
+                _settings.PhonePrefix1, _settings.PhonePrefix2, _settings.PhonePrefix3, _settings.PhonePrefix4, _settings.PhonePrefix5) = previous;
+            WriteNotes(_settings, previousNotes);
+            _settings.MonthlyFee = previousFee;
             _dialogs.Info($"設定を保存できませんでした。\n{ex.Message}");
             return;
         }
         OnPropertyChanged(nameof(Title));
     }
+    static string[] NotesOf(AppSettings s) =>
+    [
+        s.NoteButton1, s.NoteButton2, s.NoteButton3, s.NoteButton4, s.NoteButton5,
+        s.NoteButton6, s.NoteButton7, s.NoteButton8, s.NoteButton9, s.NoteButton10,
+    ];
+
+    static void WriteNotes(AppSettings s, IReadOnlyList<string> values)
+    {
+        s.NoteButton1 = TrimPrefix(values[0]);
+        s.NoteButton2 = TrimPrefix(values[1]);
+        s.NoteButton3 = TrimPrefix(values[2]);
+        s.NoteButton4 = TrimPrefix(values[3]);
+        s.NoteButton5 = TrimPrefix(values[4]);
+        s.NoteButton6 = TrimPrefix(values[5]);
+        s.NoteButton7 = TrimPrefix(values[6]);
+        s.NoteButton8 = TrimPrefix(values[7]);
+        s.NoteButton9 = TrimPrefix(values[8]);
+        s.NoteButton10 = TrimPrefix(values[9]);
+    }
+
+    static string TrimPrefix(string? value)
+    {
+        var s = (value ?? "").Trim();
+        return s.Length <= 10 ? s : s[..10];
+    }
+
     static double NormalizeFont(int size) => size switch
     {
         12 => 14,

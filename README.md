@@ -51,3 +51,17 @@ Service       DatabaseService               SQLite（ローカル）
 - 駐車場 / 全棟集計 / 会費 / 封筒印刷 / 検索
 
 印刷は Excel コンポーネントではなく、Windows の印刷ダイアログ（FlowDocument）です。
+
+## 配布用Release（DIMと同じランタイム別インストール方式）
+
+配布先には **.NET 10 Desktop Runtime（Windows x64）** が必要です。
+通常ビルドの出力ではなく、次の発行コマンドで配布用ZIPを作成します。
+
+```powershell
+powershell -File .\scripts\Build-Release.ps1
+```
+
+`release` に `DanchiManager-v<バージョン>-win-x64.zip` を作成します。
+ZIPを展開し、同梱ファイルを同じフォルダーに置いて `DanchiManager.exe` を実行してください。
+SQLiteなどの必要なDLLは同梱しますが、.NET本体は同梱しません。
+Visual Studioでは発行プロファイル `Release-win-x64` を選択することもできます。

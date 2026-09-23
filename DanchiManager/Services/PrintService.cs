@@ -105,7 +105,7 @@ public sealed class PrintService
         var startMonth = settings.EnvelopeStartMonth is >= 1 and <= 12 ? settings.EnvelopeStartMonth : 4;
         var months = Enumerable.Range(0, 12).Select(i => $"{(startMonth - 1 + i) % 12 + 1}月").ToArray();
         var title = string.IsNullOrWhiteSpace(settings.EnvelopeTitle) ? AppConstants.AssociationTitle : settings.EnvelopeTitle;
-        var monthly = AppConstants.DefaultFee;
+        var monthly = settings.MonthlyFee > 0 ? settings.MonthlyFee : AppConstants.DefaultFee;
         var yearly = monthly * 12;
         var doc = new FlowDocument
         {

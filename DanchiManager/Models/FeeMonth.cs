@@ -7,34 +7,28 @@ public partial class FeeMonth : ObservableObject
 {
     [ObservableProperty] private int _month;
     [ObservableProperty] private int _amount;
+    public int Standard { get; set; } = AppConstants.DefaultFee;
 
-    public string Label => Month switch
+    public int CalendarMonth => (Month + 3) % 12 + 1;
+    public string Label => $"{CalendarMonth}月";
+
+    public int FeeAmount
     {
-        0 => "4月",
-        1 => "5月",
-        2 => "6月",
-        3 => "7月",
-        4 => "8月",
-        5 => "9月",
-        6 => "10月",
-        7 => "11月",
-        8 => "12月",
-        9 => "1月",
-        10 => "2月",
-        11 => "3月",
-        _ => $"{Month}",
-    };
+        get => Amount > 0 ? Amount : Standard;
+        set => Amount = value < 0 ? 0 : value;
+    }
 
     public bool Paid
     {
         get => Amount > 0;
-        set
-        {
-            Amount = value ? (Amount > 0 ? Amount : AppConstants.DefaultFee) : 0;
-        }
+        set => Amount = value ? (Amount > 0 ? Amount : Standard) : 0;
     }
 
-    partial void OnAmountChanged(int value) => OnPropertyChanged(nameof(Paid));
+    partial void OnAmountChanged(int value)
+    {
+        OnPropertyChanged(nameof(Paid));
+        OnPropertyChanged(nameof(FeeAmount));
+    }
 }
 
 public partial class FeeYear : ObservableObject

@@ -31,7 +31,7 @@
               </Grid.ColumnDefinitions>
               <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
               <CheckBox Grid.Column="1" IsChecked="{Binding Paid, Mode=TwoWay}" VerticalAlignment="Center"/>
-              <TextBox Grid.Column="2" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left"/>
+              <TextBox Grid.Column="2" Text="{Binding FeeAmount, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left"/>
             </Grid>
           </DataTemplate>
         </ItemsControl.ItemTemplate>

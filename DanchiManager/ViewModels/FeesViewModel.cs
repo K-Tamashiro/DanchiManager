@@ -62,9 +62,11 @@ public partial class FeesViewModel : ObservableObject
     [RelayCommand]
     private void ToggleAll()
     {
+        var standard = Fee.Months.FirstOrDefault()?.Standard ?? AppConstants.DefaultFee;
+        if (standard <= 0) standard = AppConstants.DefaultFee;
         var any = Fee.Months.Any(m => m.Amount > 0);
         foreach (var m in Fee.Months)
-            m.Amount = any ? 0 : AppConstants.DefaultFee;
+            m.Amount = any ? 0 : standard;
         OnPropertyChanged(nameof(TotalText));
     }
 
