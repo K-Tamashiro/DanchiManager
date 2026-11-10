@@ -1,4 +1,4 @@
-namespace DanchiManager.Models;
+﻿namespace DanchiManager.Models;
 
 public sealed class FloorDef
 {

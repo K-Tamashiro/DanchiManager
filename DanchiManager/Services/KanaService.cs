@@ -1,4 +1,4 @@
-namespace DanchiManager.Services;
+﻿namespace DanchiManager.Services;
 
 public static class KanaService
 {

@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using DanchiManager.ViewModels;
 using DanchiManager.Views;
 using Microsoft.Win32;
