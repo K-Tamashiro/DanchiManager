@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿namespace DanchiManager.Views;
 
-namespace DanchiManager.Views;
-
-public partial class FeeListPreviewWindow : Window
+public partial class FeeListPreviewWindow
 {
     public FeeListPreviewWindow()
     {

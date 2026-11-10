@@ -36,22 +36,25 @@ public partial class SettingsViewModel : ObservableObject
         _envelopeTitle = settings.EnvelopeTitle;
         _envelopeStartMonth = settings.EnvelopeStartMonth is >= 1 and <= 12 ? settings.EnvelopeStartMonth : 4;
         _monthlyFee = settings.MonthlyFee >= 0 ? settings.MonthlyFee : 0;
-        _phonePrefix1 = settings.PhonePrefix1 ?? "";
-        _phonePrefix2 = settings.PhonePrefix2 ?? "";
-        _phonePrefix3 = settings.PhonePrefix3 ?? "";
-        _phonePrefix4 = settings.PhonePrefix4 ?? "";
-        _phonePrefix5 = settings.PhonePrefix5 ?? "";
-        _noteButton1 = settings.NoteButton1 ?? "";
-        _noteButton2 = settings.NoteButton2 ?? "";
-        _noteButton3 = settings.NoteButton3 ?? "";
-        _noteButton4 = settings.NoteButton4 ?? "";
-        _noteButton5 = settings.NoteButton5 ?? "";
-        _noteButton6 = settings.NoteButton6 ?? "";
-        _noteButton7 = settings.NoteButton7 ?? "";
-        _noteButton8 = settings.NoteButton8 ?? "";
-        _noteButton9 = settings.NoteButton9 ?? "";
-        _noteButton10 = settings.NoteButton10 ?? "";
+        _phonePrefix1 = OrEmpty(settings.PhonePrefix1);
+        _phonePrefix2 = OrEmpty(settings.PhonePrefix2);
+        _phonePrefix3 = OrEmpty(settings.PhonePrefix3);
+        _phonePrefix4 = OrEmpty(settings.PhonePrefix4);
+        _phonePrefix5 = OrEmpty(settings.PhonePrefix5);
+        _noteButton1 = OrEmpty(settings.NoteButton1);
+        _noteButton2 = OrEmpty(settings.NoteButton2);
+        _noteButton3 = OrEmpty(settings.NoteButton3);
+        _noteButton4 = OrEmpty(settings.NoteButton4);
+        _noteButton5 = OrEmpty(settings.NoteButton5);
+        _noteButton6 = OrEmpty(settings.NoteButton6);
+        _noteButton7 = OrEmpty(settings.NoteButton7);
+        _noteButton8 = OrEmpty(settings.NoteButton8);
+        _noteButton9 = OrEmpty(settings.NoteButton9);
+        _noteButton10 = OrEmpty(settings.NoteButton10);
     }
+
+    // 設定ファイルを手で編集して null が入っていても空文字として扱う
+    static string OrEmpty(string? value) => value ?? "";
 
     [RelayCommand]
     private void Save()

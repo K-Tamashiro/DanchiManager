@@ -1,10 +1,9 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using DanchiManager.ViewModels;
 
 namespace DanchiManager.Views;
 
-public partial class TotalsWindow : Window
+public partial class TotalsWindow
 {
     public TotalsWindow()
     {

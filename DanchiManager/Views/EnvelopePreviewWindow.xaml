@@ -23,7 +23,7 @@
         <GridView>
           <GridViewColumn Header="印刷" Width="70">
             <GridViewColumn.CellTemplate>
-              <DataTemplate>
+              <DataTemplate DataType="{x:Type vm:EnvelopeRecipient}">
                 <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
               </DataTemplate>

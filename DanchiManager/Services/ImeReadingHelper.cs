@@ -9,9 +9,9 @@ namespace DanchiManager.Services;
 
 public static class ImeReadingHelper
 {
-    const int WM_IME_COMPOSITION = 0x010F;
-    const int GCS_RESULTREADSTR = 0x0200;
-    const int GCS_COMPREADSTR = 0x0002;
+    const int WmImeComposition = 0x010F;
+    const int GcsResultReadStr = 0x0200;
+    const int GcsCompReadStr = 0x0002;
 
     [DllImport("imm32.dll")] static extern nint ImmGetContext(nint hwnd);
     [DllImport("imm32.dll")] static extern bool ImmReleaseContext(nint hwnd, nint himc);
@@ -58,17 +58,17 @@ public static class ImeReadingHelper
         void HookHwnd()
         {
             if (PresentationSource.FromVisual(box) is not HwndSource src) return;
-            src.AddHook((nint hwnd, int msg, nint w, nint l, ref bool handled) =>
+            src.AddHook((hwnd, msg, _, l, ref _) =>
             {
-                if (msg != WM_IME_COMPOSITION) return nint.Zero;
+                if (msg != WmImeComposition) return nint.Zero;
                 var flags = l.ToInt64();
-                if ((flags & GCS_COMPREADSTR) != 0)
+                if ((flags & GcsCompReadStr) != 0)
                 {
-                    var comp = ReadImeString(hwnd, GCS_COMPREADSTR);
+                    var comp = ReadImeString(hwnd, GcsCompReadStr);
                     if (IsKana(comp)) pending = comp;
                 }
-                if ((flags & GCS_RESULTREADSTR) == 0) return nint.Zero;
-                var reading = ReadImeString(hwnd, GCS_RESULTREADSTR);
+                if ((flags & GcsResultReadStr) == 0) return nint.Zero;
+                var reading = ReadImeString(hwnd, GcsResultReadStr);
                 if (!IsKana(reading)) return nint.Zero;
                 if (justEmitted)
                 {

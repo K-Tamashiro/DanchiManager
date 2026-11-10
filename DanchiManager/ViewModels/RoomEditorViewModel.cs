@@ -61,7 +61,7 @@ public partial class RoomEditorViewModel : ObservableObject
     public void ApplyPhonePrefix(string prefix)
     {
         if (string.IsNullOrWhiteSpace(prefix)) return;
-        var phone = Draft.Phone ?? "";
+        var phone = Draft.Phone;
         foreach (var known in new[] { PhonePrefix1, PhonePrefix2, PhonePrefix3, PhonePrefix4, PhonePrefix5 })
         {
             if (known.Length > 0 && phone.StartsWith(known, StringComparison.Ordinal))

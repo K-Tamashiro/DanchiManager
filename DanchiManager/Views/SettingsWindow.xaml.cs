@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿namespace DanchiManager.Views;
 
-namespace DanchiManager.Views;
-
-public partial class SettingsWindow : Window
+public partial class SettingsWindow
 {
     public SettingsWindow()
     {

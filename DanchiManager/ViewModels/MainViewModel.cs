@@ -111,7 +111,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
         12 => 14,
         14 => 14,
         18 => 18,
-        16 => 16,
         _ => 16,
     };
 
@@ -162,7 +161,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         var cols = floors.Count == 0 ? 1 : Math.Max(1, floors.Max(f => f.Rooms.Count));
         foreach (var floor in floors)
         {
-            var row = new FloorRowViewModel { Level = floor.Level };
+            var row = new FloorRowViewModel();
             for (var col = 0; col < cols; col++)
             {
                 var card = new RoomCardViewModel();

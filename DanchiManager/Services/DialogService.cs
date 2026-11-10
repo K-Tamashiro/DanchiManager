@@ -32,10 +32,16 @@ public sealed class DialogService : IDialogService
     public Window? Owner { get; set; }
 
     public bool Confirm(string message, string title = "確認") =>
-        MessageBox.Show(Owner, message, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK;
+        ShowMessage(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK;
 
     public void Info(string message, string title = "団地管理") =>
-        MessageBox.Show(Owner, message, title, MessageBoxButton.OK, MessageBoxImage.Information);
+        ShowMessage(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
+
+    // オーナー未設定のときはオーナーなしで表示する
+    MessageBoxResult ShowMessage(string message, string title, MessageBoxButton button, MessageBoxImage image) =>
+        Owner is { } owner
+            ? MessageBox.Show(owner, message, title, button, image)
+            : MessageBox.Show(message, title, button, image);
 
     public string? Prompt(string message, string title = "入力")
     {

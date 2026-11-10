@@ -6,7 +6,10 @@ namespace DanchiManager.Models;
 public partial class FeeMonth : ObservableObject
 {
     [ObservableProperty] private int _month;
-    [ObservableProperty] private int _amount;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Paid))]
+    [NotifyPropertyChangedFor(nameof(FeeAmount))]
+    private int _amount;
     public int Standard { get; set; } = AppConstants.DefaultFee;
 
     public int CalendarMonth => (Month + 3) % 12 + 1;
@@ -22,12 +25,6 @@ public partial class FeeMonth : ObservableObject
     {
         get => Amount > 0;
         set => Amount = value ? (Amount > 0 ? Amount : Standard) : 0;
-    }
-
-    partial void OnAmountChanged(int value)
-    {
-        OnPropertyChanged(nameof(Paid));
-        OnPropertyChanged(nameof(FeeAmount));
     }
 }
 

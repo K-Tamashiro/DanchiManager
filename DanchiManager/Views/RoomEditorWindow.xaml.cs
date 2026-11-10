@@ -8,7 +8,7 @@ using DanchiManager.ViewModels;
 
 namespace DanchiManager.Views;
 
-public partial class RoomEditorWindow : Window
+public partial class RoomEditorWindow
 {
     readonly TextBox[] _padTargets;
     readonly TextBox[] _fields;
@@ -48,7 +48,7 @@ public partial class RoomEditorWindow : Window
         if (box == NoteBox)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
-            var text = box.Text ?? "";
+            var text = box.Text;
             var caret = box.CaretIndex;
             if (caret > 0 && (text[caret - 1] == '\n' || text[caret - 1] == '\r'))
             {

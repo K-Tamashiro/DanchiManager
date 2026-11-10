@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿namespace DanchiManager.Views;
 
-namespace DanchiManager.Views;
-
-public partial class BuildingPickWindow : Window
+public partial class BuildingPickWindow
 {
     public BuildingPickWindow()
     {

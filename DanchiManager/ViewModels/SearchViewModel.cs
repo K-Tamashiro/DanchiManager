@@ -16,13 +16,15 @@ public partial class SearchViewModel : ObservableObject
 
     public SearchViewModel(IEnumerable<RoomRecord> rooms) => _all = rooms.ToList();
 
-    partial void OnQueryChanged(string value) => Run();
+    partial void OnQueryChanged(string value) => Search(value);
 
     [RelayCommand]
-    private void Run()
+    private void Run() => Search(Query);
+
+    void Search(string query)
     {
         Hits.Clear();
-        var q = Query.Trim();
+        var q = query.Trim();
         if (q.Length == 0) return;
         foreach (var r in _all.Where(x =>
                      x.Name.Contains(q, StringComparison.OrdinalIgnoreCase) ||

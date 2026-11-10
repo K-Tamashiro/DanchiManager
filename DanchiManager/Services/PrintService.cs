@@ -298,8 +298,8 @@ public sealed class PrintService
         double? heightMm = null)
     {
         // 封筒は指定サイズ、通常帳票はA4縦でプレビューする
-        var width = widthMm is double wmm ? Mm(wmm) : Mm(210);
-        var height = heightMm is double hmm ? Mm(hmm) : Mm(297);
+        var width = widthMm is { } wmm ? Mm(wmm) : Mm(210);
+        var height = heightMm is { } hmm ? Mm(hmm) : Mm(297);
         ConfigurePage(doc, width, height);
 
         // 用紙そのものは白のまま表示する
@@ -359,7 +359,7 @@ public sealed class PrintService
             Content = root,
         };
 
-        if (Application.Current?.MainWindow is Window owner && owner != window)
+        if (Application.Current?.MainWindow is { } owner && owner != window)
             window.Owner = owner;
 
         printButton.Click += (_, _) =>
@@ -391,7 +391,7 @@ public sealed class PrintService
         viewer.CommandBindings.Add(new System.Windows.Input.CommandBinding(
             System.Windows.Input.ApplicationCommands.Print, (_, e) =>
             {
-                printButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                printButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
                 e.Handled = true;
             }));
         closeButton.Click += (_, _) => window.Close();
@@ -418,7 +418,7 @@ public sealed class PrintService
         var queue = dlg.PrintQueue
             ?? throw new InvalidOperationException("プリンターが選択されていません。");
         // 選択した封筒用紙を保持し、検証後のチケットを実際の印刷にも使う。
-        var ticket = dlg.PrintTicket?.Clone() ?? new PrintTicket();
+        var ticket = dlg.PrintTicket.Clone();
         dlg.PrintTicket = PreparePrint(doc, queue, ticket, widthMm, heightMm);
         dlg.PrintDocument(((IDocumentPaginatorSource)doc).DocumentPaginator, description);
     }
@@ -431,7 +431,7 @@ public sealed class PrintService
         var size = validated.PageMediaSize;
         var width = Mm(widthMm);
         var height = Mm(heightMm);
-        if (size?.Width is not double actualWidth || size.Height is not double actualHeight ||
+        if (size?.Width is not { } actualWidth || size.Height is not { } actualHeight ||
             Math.Abs(actualWidth - width) > Mm(1) || Math.Abs(actualHeight - height) > Mm(1) ||
             validated.PageOrientation != PageOrientation.Portrait)
             throw new InvalidOperationException(

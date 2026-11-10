@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿namespace DanchiManager.Views;
 
-namespace DanchiManager.Views;
-
-public partial class EnvelopePreviewWindow : Window
+public partial class EnvelopePreviewWindow
 {
     public EnvelopePreviewWindow()
     {

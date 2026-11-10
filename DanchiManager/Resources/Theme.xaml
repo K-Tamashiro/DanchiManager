@@ -156,7 +156,6 @@
   <Style x:Key="SizePickButton" TargetType="Button" BasedOn="{StaticResource WinButton}">
     <Setter Property="Padding" Value="4,8"/>
     <Setter Property="Margin" Value="1"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
   </Style>
 
   <Style TargetType="TextBox">

@@ -2,7 +2,7 @@
 
 namespace DanchiManager.Views;
 
-public partial class PromptWindow : Window
+public partial class PromptWindow
 {
     public string Value => InputBox.Text;
 

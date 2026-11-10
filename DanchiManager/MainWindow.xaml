@@ -3,6 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:DanchiManager.ViewModels"
         xmlns:c="clr-namespace:DanchiManager.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:MainViewModel}"
         Title="{Binding Title}"
         Height="820" Width="1280"
         MinHeight="640" MinWidth="1024"
@@ -148,11 +152,11 @@
 
     <Border DockPanel.Dock="Bottom" Background="#D8D4C4" Padding="4">
       <UniformGrid Rows="1" Columns="5">
-        <Button Style="{StaticResource GreenButton}" Command="{Binding OpenParkingCommand}" Content="駐車場管理" Margin="2" Height="52"/>
-        <Button Style="{StaticResource GoldButton}" Command="{Binding PrintFeeListCommand}" Content="会費確認" Margin="2"/>
-        <Button Style="{StaticResource GoldButton}" Command="{Binding SearchCommand}" Content="棟情報検索" Margin="2"/>
-        <Button Style="{StaticResource OrangeButton}" Command="{Binding OpenTotalsCommand}" Content="全棟集計確認" Margin="2"/>
-        <Button Style="{StaticResource OrangeButton}" Command="{Binding PrintBuildingDetailCommand}" Content="棟情報確認" Margin="2"/>
+        <Button Style="{StaticResource GreenButton}" Command="{Binding OpenParkingCommand}" Content="駐車場管理" Height="52"/>
+        <Button Style="{StaticResource GoldButton}" Command="{Binding PrintFeeListCommand}" Content="会費確認"/>
+        <Button Style="{StaticResource GoldButton}" Command="{Binding SearchCommand}" Content="棟情報検索"/>
+        <Button Style="{StaticResource OrangeButton}" Command="{Binding OpenTotalsCommand}" Content="全棟集計確認"/>
+        <Button Style="{StaticResource OrangeButton}" Command="{Binding PrintBuildingDetailCommand}" Content="棟情報確認"/>
       </UniformGrid>
     </Border>
 

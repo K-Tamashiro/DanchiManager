@@ -4,7 +4,7 @@ using System.Windows.Interop;
 
 namespace DanchiManager;
 
-public partial class MainWindow : Window
+public partial class MainWindow
 {
     const int WmMouseHWheel = 0x020E;
     const double HorizontalWheelStep = 48;

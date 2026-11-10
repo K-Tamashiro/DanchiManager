@@ -8,32 +8,32 @@ namespace DanchiManager.Converters;
 
 public sealed class VacancyToGlyphConverter : IValueConverter
 {
-    public object Convert(object value, Type t, object p, CultureInfo c) =>
+    public object Convert(object? value, Type t, object? p, CultureInfo c) =>
         value is VacancyFlag.Vacant ? "空" : value is VacancyFlag.Hospital ? "入院" : "";
 
-    public object ConvertBack(object value, Type t, object p, CultureInfo c) => Binding.DoNothing;
+    public object? ConvertBack(object? value, Type t, object? p, CultureInfo c) => Binding.DoNothing;
 }
 
 public sealed class BoolToVisibilityConverter : IValueConverter
 {
     public bool Invert { get; set; }
 
-    public object Convert(object value, Type t, object p, CultureInfo c)
+    public object Convert(object? value, Type t, object? p, CultureInfo c)
     {
         var b = value is true;
         if (Invert) b = !b;
         return b ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    public object ConvertBack(object value, Type t, object p, CultureInfo c) => Binding.DoNothing;
+    public object? ConvertBack(object? value, Type t, object? p, CultureInfo c) => Binding.DoNothing;
 }
 
 public sealed class NullToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type t, object p, CultureInfo c) =>
+    public object Convert(object? value, Type t, object? p, CultureInfo c) =>
         value is null ? Visibility.Collapsed : Visibility.Visible;
 
-    public object ConvertBack(object value, Type t, object p, CultureInfo c) => Binding.DoNothing;
+    public object? ConvertBack(object? value, Type t, object? p, CultureInfo c) => Binding.DoNothing;
 }
 
 public sealed class FloorHeaderConverter : IMultiValueConverter
@@ -60,9 +60,9 @@ public sealed class FloorHeaderConverter : IMultiValueConverter
             return Brush(Color.FromRgb(0xF0, 0x70, 0x90), Color.FromRgb(0xD0, 0x50, 0x70));
         if (vacancy == VacancyFlag.Vacant)
             return Brush(Color.FromRgb(0x5A, 0x5A, 0x5A), Color.FromRgb(0x3A, 0x3A, 0x3A));
-        if (vacancy != VacancyFlag.Vacant && gender == GenderFlag.Male)
+        if (gender == GenderFlag.Male)
             return Brush(Color.FromRgb(0x90, 0xC8, 0xF0), Color.FromRgb(0x58, 0x90, 0xC0));
-        if (vacancy != VacancyFlag.Vacant && gender == GenderFlag.Female)
+        if (gender == GenderFlag.Female)
             return Brush(Color.FromRgb(0xF0, 0xA0, 0xC8), Color.FromRgb(0xD0, 0x70, 0x98));
         var floor = 1;
         if (int.TryParse(roomNo, out var n)) floor = Math.Max(1, n / 100);
@@ -79,21 +79,21 @@ public sealed class FloorHeaderConverter : IMultiValueConverter
 
 public sealed class InverseBoolConverter : IValueConverter
 {
-    public object Convert(object value, Type t, object p, CultureInfo c) => value is not true;
-    public object ConvertBack(object value, Type t, object p, CultureInfo c) => value is not true;
+    public object Convert(object? value, Type t, object? p, CultureInfo c) => value is not true;
+    public object ConvertBack(object? value, Type t, object? p, CultureInfo c) => value is not true;
 }
 
 public sealed class NonEmptyToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type t, object p, CultureInfo c) =>
+    public object Convert(object? value, Type t, object? p, CultureInfo c) =>
         value is string s && s.Trim().Length > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-    public object ConvertBack(object value, Type t, object p, CultureInfo c) => Binding.DoNothing;
+    public object? ConvertBack(object? value, Type t, object? p, CultureInfo c) => Binding.DoNothing;
 }
 
 public sealed class ScaleConverter : IValueConverter
 {
-    public object Convert(object value, Type t, object p, CultureInfo c)
+    public object? Convert(object? value, Type t, object? p, CultureInfo c)
     {
         var n = value is double d ? d : value is int i ? i : 16d;
         var m = 1d;
@@ -102,15 +102,15 @@ public sealed class ScaleConverter : IValueConverter
         return n * m;
     }
 
-    public object ConvertBack(object value, Type t, object p, CultureInfo c) => Binding.DoNothing;
+    public object? ConvertBack(object? value, Type t, object? p, CultureInfo c) => Binding.DoNothing;
 }
 
 public sealed class EnumEqualsConverter : IValueConverter
 {
-    public object Convert(object value, Type t, object p, CultureInfo c) =>
+    public object? Convert(object? value, Type t, object? p, CultureInfo c) =>
         value is not null && p is not null && value.ToString() == p.ToString();
 
-    public object ConvertBack(object value, Type t, object p, CultureInfo c)
+    public object? ConvertBack(object? value, Type t, object? p, CultureInfo c)
     {
         if (value is not true || p is null) return Binding.DoNothing;
         var name = p.ToString();

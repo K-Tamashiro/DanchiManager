@@ -28,12 +28,11 @@ public partial class BuildingSheetViewModel : ObservableObject
         SelectedBuilding = current ?? _buildings.FirstOrDefault();
     }
 
-    partial void OnSelectedBuildingChanged(Building? value) => Load();
+    partial void OnSelectedBuildingChanged(Building? value) => Load(value);
 
-    void Load()
+    void Load(Building? b)
     {
         Rooms.Clear();
-        var b = SelectedBuilding;
         if (b is null)
         {
             Title = "棟情報確認";

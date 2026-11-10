@@ -4,7 +4,7 @@ using DanchiManager.ViewModels;
 
 namespace DanchiManager;
 
-public partial class App : Application
+public partial class App
 {
     MainViewModel? _viewModel;
 

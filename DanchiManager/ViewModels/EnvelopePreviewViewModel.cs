@@ -42,15 +42,15 @@ public partial class EnvelopePreviewViewModel : ObservableObject
         _focusRoomNo = focusRoomNo;
         _envelopeRoom = envelopeRoom?.Clone();
         _allBuildings = string.IsNullOrEmpty(currentBuilding);
-        Rebuild();
+        Rebuild(_allBuildings);
     }
 
-    partial void OnAllBuildingsChanged(bool value) => Rebuild();
+    partial void OnAllBuildingsChanged(bool value) => Rebuild(value);
 
-    void Rebuild()
+    void Rebuild(bool allBuildings)
     {
         Recipients.Clear();
-        IReadOnlyList<RoomRecord> source = AllBuildings
+        IReadOnlyList<RoomRecord> source = allBuildings
             ? _db.LoadRooms()
             : string.IsNullOrEmpty(_currentBuilding) ? [] : _db.LoadRooms(_currentBuilding);
         foreach (var r in source

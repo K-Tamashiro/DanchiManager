@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿namespace DanchiManager.Views;
 
-namespace DanchiManager.Views;
-
-public partial class ParkingWindow : Window
+public partial class ParkingWindow
 {
     public ParkingWindow()
     {

@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿namespace DanchiManager.Views;
 
-namespace DanchiManager.Views;
-
-public partial class BuildingSheetWindow : Window
+public partial class BuildingSheetWindow
 {
     public BuildingSheetWindow()
     {

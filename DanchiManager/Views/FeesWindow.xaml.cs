@@ -1,8 +1,6 @@
-﻿using System.Windows;
+﻿namespace DanchiManager.Views;
 
-namespace DanchiManager.Views;
-
-public partial class FeesWindow : Window
+public partial class FeesWindow
 {
     public FeesWindow()
     {

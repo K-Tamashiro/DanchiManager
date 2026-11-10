@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace DanchiManager.Views;
 
-public partial class NumberPicker : UserControl
+public partial class NumberPicker
 {
     public TextBox? Target { get; set; }
     public bool DigitsOnly { get; set; }
@@ -30,7 +30,7 @@ public partial class NumberPicker : UserControl
             return;
         }
         if (Target is null) return;
-        var text = Target.Text ?? "";
+        var text = Target.Text;
         switch (key)
         {
             case "AC":

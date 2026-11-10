@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DanchiManager.Models;
 using DanchiManager.Services;
@@ -48,8 +47,6 @@ public partial class BuildingEditorViewModel : ObservableObject
         }
     }
 
-    public ObservableCollection<string> PreviewLines { get; } = [];
-
     [RelayCommand]
     private void RebuildLayout()
     {
@@ -67,15 +64,6 @@ public partial class BuildingEditorViewModel : ObservableObject
             lines.Add(string.Join(",", rooms));
         }
         CustomLayout = string.Join("\n", lines);
-        RefreshPreview();
-    }
-
-    [RelayCommand]
-    private void RefreshPreview()
-    {
-        PreviewLines.Clear();
-        foreach (var line in CustomLayout.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-            PreviewLines.Add(line);
     }
 
     List<FloorDef> ParseFloors()

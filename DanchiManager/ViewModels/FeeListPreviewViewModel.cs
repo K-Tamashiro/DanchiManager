@@ -37,13 +37,13 @@ public partial class FeeListPreviewViewModel : ObservableObject
         Year = AppConstants.FiscalWarekiYear();
     }
 
-    partial void OnYearChanged(int value) => Reload();
+    partial void OnYearChanged(int value) => Reload(value);
 
-    void Reload()
+    void Reload(int year)
     {
         Rows.Clear();
         Sum = 0;
-        foreach (var r in _db.FeeList(Year))
+        foreach (var r in _db.FeeList(year))
         {
             Rows.Add(new FeeListRow
             {
